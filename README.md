@@ -56,19 +56,21 @@
 
 ## 📦 安装（给别人部署的步骤）
 
+**方式一：从 PyPI 一键安装（推荐）**
+```bash
+pip install arknights-datakit
+```
+
+**方式二：从 GitHub 安装**
 ```bash
 git clone https://github.com/xianyu686/bot-ark-tools
 cd bot-ark-tools
-
-# 方式 A：常规
-pip install -r requirements.txt
-# 方式 B：装成包（推荐，import ak_core 直接可用 + ark-tools 命令）
-pip install -e .
-
-# 指定数据目录（可选，默认 ~/arknights-data）
-#  export AK_DATA_DIR=/path/to/your/data    (Linux/Mac)
-#  set  AK_DATA_DIR=D:\your\data             (Windows)
+pip install -e .   # 或 pip install -r requirements.txt
 ```
+
+装完自带 `ark-tools` 命令 + `import ak_core` 库。
+
+> 指定数据目录（可选，默认 `~/arknights-data`）：设置环境变量 `AK_DATA_DIR`。
 
 ## 🖥️ 纯净包用法（不依赖任何 bot 框架）
 
