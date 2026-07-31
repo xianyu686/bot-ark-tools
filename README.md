@@ -6,7 +6,7 @@
 
 一个零依赖 bot 框架的明日方舟数据核心：完整复刻寻访机制 + 干员图鉴 / 档案 / 语音 / 剧情 / 公招。
 
-[![PyPI](https://img.shields.io/pypi/v/arknights-datakit?color=blue)](https://pypi.org/project/arknights-datakit/)
+[![PyPI](https://img.shields.io/pypi/v/arknights-datakit?color=blue&cacheSeconds=600)](https://pypi.org/project/arknights-datakit/)
 [![Python](https://img.shields.io/pypi/pyversions/arknights-datakit)](https://pypi.org/project/arknights-datakit/)
 [![License](https://img.shields.io/github/license/xianyu686/bot-ark-tools)](LICENSE)
 [![Stars](https://img.shields.io/github/stars/xianyu686/bot-ark-tools?style=social)](https://github.com/xianyu686/bot-ark-tools)
