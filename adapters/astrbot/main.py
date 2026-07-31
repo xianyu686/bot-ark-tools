@@ -7,10 +7,7 @@
 from __future__ import annotations
 
 import asyncio
-import sys
 from pathlib import Path
-
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))  # 使 ak_core 可导入
 
 from astrbot.api import AstrBotConfig, logger  # noqa: E402
 from astrbot.api.event import AstrMessageEvent, filter  # noqa: E402
