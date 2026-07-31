@@ -138,4 +138,4 @@ core.list_banners()                           # 卡池列表
 
 ## 📄 许可证
 
-代码：MIT License（见 [LICENSE](LICENSE)）
+代码：**GNU GPL v3**（copyleft —— 衍生作品必须同样开源，见 [LICENSE](LICENSE)）
