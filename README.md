@@ -59,13 +59,38 @@ cd bot-ark-tools
 
 # 方式 A：常规
 pip install -r requirements.txt
-# 方式 B：装成包（推荐，import ak_core 直接可用）
+# 方式 B：装成包（推荐，import ak_core 直接可用 + ark-tools 命令）
 pip install -e .
 
 # 指定数据目录（可选，默认 ~/arknights-data）
 #  export AK_DATA_DIR=/path/to/your/data    (Linux/Mac)
 #  set  AK_DATA_DIR=D:\your\data             (Windows)
 ```
+
+## 🖥️ 纯净包用法（不依赖任何 bot 框架）
+
+安装后自带 `ark-tools` 命令：
+
+```bash
+ark-tools sync all                  # 同步全部数据
+ark-tools pull --user 1 --count 10  # 抽十连
+ark-tools operator 能天使           # 查干员
+ark-tools archive 能天使            # 查档案
+ark-tools story 0-10                # 查剧情
+ark-tools recruit --tags "减速 特种" # 公招
+ark-tools server --port 8900        # 启动 HTTP 微服务
+```
+
+**HTTP 微服务**（任何框架/网页/脚本都能调）：
+
+```bash
+ark-tools server --port 8900
+curl http://127.0.0.1:8900/health
+curl "http://127.0.0.1:8900/operator?name=%E8%83%BD%E5%A4%A9%E4%BD%BF"
+curl -X POST http://127.0.0.1:8900/gacha/pull -d '{"user_id":"1","count":10}'
+```
+
+> 中文参数需 URL 编码（HTTP 标准）。接口见 [docs/API.md](docs/API.md) 与 `ak_tools/server.py`。
 
 ## 🚀 使用
 
