@@ -97,6 +97,10 @@ curl -X POST http://127.0.0.1:8900/gacha/pull -d '{"user_id":"1","count":10}'
 
 ## 🚀 使用
 
+### 0. 说明：纯净核心本身就能用
+
+`ak_core` + `ark-tools` CLI/HTTP 是**完整可用**的（不接任何 bot 也能抽卡/查档案/看剧情）。下面的「接入 bot」是**可选的**——只是加一个薄适配器壳。
+
 ### 1. 生成数据（运行爬虫）
 
 ```bash
@@ -138,7 +142,8 @@ python -m akdata_crawler.run all
 ```python
 from ak_core import ArkCore
 
-core = ArkCore(data_dir="D:/AKData", user_data_dir="D:/AKData/userdata")
+# 零参数实例化：数据目录取环境变量 AK_DATA_DIR（默认 ~/arknights-data），跨平台纯净
+core = ArkCore()
 
 core.pull("user_id", "标准轮换·卡池190", 10)   # 十连 → dict
 core.operator_card("能天使")                    # 干员信息
@@ -148,6 +153,8 @@ core.get_story("0-10")                        # 剧情
 core.recruit("user_id", "减速 特种")            # 公招
 core.list_banners()                           # 卡池列表
 ```
+
+> 完整方法与返回结构见 [docs/API.md](docs/API.md)。核心是纯净库——只认参数、只回 dict，不掺任何框架。
 
 ## ⚠️ 免责声明
 
