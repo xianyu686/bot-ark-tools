@@ -27,7 +27,7 @@ class ArkCore:
         self.user_dir = Path(user_data_dir or str(Path(data_dir) / "userdata"))
         self.user_dir.mkdir(parents=True, exist_ok=True)
         self._users: dict[str, dict] = {}
-        self.daily_limit = 300  # 反刷屏限制（游戏本身无硬上限）
+        self.daily_limit = 0  # 每日上限：0 = 无限（游戏本身无硬上限）
 
     # ---------- 用户数据 ----------
 
@@ -90,7 +90,7 @@ class ArkCore:
     def pull(self, user_id: str, banner_name: str | None = None, count: int = 1) -> dict:
         u = self._user(user_id)
         b = self.get_banner(banner_name or u.get("bn", "标准寻访"))
-        if u["daily"] + count > self.daily_limit:
+        if self.daily_limit > 0 and u["daily"] + count > self.daily_limit:
             return {"ok": False, "error": f"今日抽卡已达上限({self.daily_limit}抽)，明天再来吧~"}
         cost = (count // 10) * 6000 + (count % 10) * 600
         if u["currencies"].get("jade", 0) < cost:
