@@ -1,7 +1,7 @@
 """明日方舟数据爬取 CLI。
 
-用法（在 D:\\QQBot 下）：
-  python -m akdata_crawler.run operators          # 干员全量（本地快照/实时）
+用法（在项目根目录下）：
+  python -m akdata_crawler.run operators          # 干员全量（自动实时抓取）
   python -m akdata_crawler.run avatars            # 头像批量下载
   python -m akdata_crawler.run archives           # 干员档案
   python -m akdata_crawler.run voices             # 语音文本

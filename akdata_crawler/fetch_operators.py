@@ -1,8 +1,8 @@
-"""抓取/解析干员全量数据 → D:/AKData/operators.json + operator_index.json。
+"""抓取/解析干员全量数据 → 数据目录/operators.json + operator_index.json。
 
 用法：
   python -m akdata_crawler.fetch_operators [--live] [--refresh]
-  --live    从 PRTS 实时抓取「干员一览」页面（默认读本地快照 本地快照 prts_operators.html）
+  --live    强制从 PRTS 实时抓取「干员一览」页面（默认自动：有快照用快照，无快照实时抓）
   --refresh 强制重新生成（默认：operators.json 已存在且非空则跳过）
 """
 from __future__ import annotations
@@ -10,6 +10,8 @@ from __future__ import annotations
 import json
 import sys
 from pathlib import Path
+
+from . import get_data_dir
 
 from .parsers.operators_html import parse_operators_html, build_index
 
@@ -28,20 +30,22 @@ def main(live: bool = False, refresh: bool = False):
 
     DATA_DIR.mkdir(parents=True, exist_ok=True)
 
-    if live:
+    # 无本地快照时自动降级为实时抓取，保证任何环境都能同步
+    if not live and SNAPSHOT.exists():
+        html = SNAPSHOT.read_text(encoding="utf-8")
+    else:
         from .prts_client import PrtsClient
         client = PrtsClient()
         r = client._get(LIVE_URL)
         if r is None:
-            print("[warn] 实时抓取失败，回退本地快照")
-            html = SNAPSHOT.read_text(encoding="utf-8")
+            if SNAPSHOT.exists():
+                print("[warn] 实时抓取失败，回退本地快照")
+                html = SNAPSHOT.read_text(encoding="utf-8")
+            else:
+                print("[err] 实时抓取失败且无本地快照，请检查网络")
+                sys.exit(1)
         else:
             html = r.text
-    else:
-        if not SNAPSHOT.exists():
-            print(f"[err] 本地快照不存在: {SNAPSHOT}，请用 --live")
-            sys.exit(1)
-        html = SNAPSHOT.read_text(encoding="utf-8")
 
     ops = parse_operators_html(html)
     if not ops:

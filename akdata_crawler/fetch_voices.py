@@ -10,6 +10,8 @@ import re
 import sys
 from pathlib import Path
 
+from . import get_data_dir
+
 from .prts_client import PrtsClient
 
 sys.stdout.reconfigure(encoding="utf-8")

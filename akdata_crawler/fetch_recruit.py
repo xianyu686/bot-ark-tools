@@ -9,6 +9,8 @@ import json
 import sys
 from pathlib import Path
 
+from . import get_data_dir
+
 sys.stdout.reconfigure(encoding="utf-8")
 
 DATA_DIR = get_data_dir()

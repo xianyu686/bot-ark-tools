@@ -1,7 +1,7 @@
 """ArkCore：明日方舟数据系统的框架无关核心门面。
 
 任何 bot 框架（AstrBot/NoneBot2/Koishi/ZeroBot…）都可以：
-  1. 实例化 ArkCore(data_dir="D:/AKData", user_data_dir="...")
+  1. 实例化 ArkCore()（数据目录取 AK_DATA_DIR 或默认 ~/arknights-data）
   2. 把聊天命令翻译成对 core 的调用
   3. 把返回的 dict/str 拼成自己的消息格式发出去
 
