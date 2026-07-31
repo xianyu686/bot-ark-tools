@@ -6,13 +6,13 @@
 
 一个零依赖 bot 框架的明日方舟数据核心：完整复刻寻访机制 + 干员图鉴 / 档案 / 语音 / 剧情 / 公招。
 
-[![PyPI](https://img.shields.io/pypi/v/arknights-datakit?color=blue&cacheSeconds=600)](https://pypi.org/project/arknights-datakit/)
+[![PyPI](https://img.shields.io/badge/PyPI-1.3.1-blue)](https://pypi.org/project/arknights-datakit/)
 [![Python](https://img.shields.io/pypi/pyversions/arknights-datakit)](https://pypi.org/project/arknights-datakit/)
 [![License](https://img.shields.io/github/license/xianyu686/bot-ark-tools)](LICENSE)
 [![Stars](https://img.shields.io/github/stars/xianyu686/bot-ark-tools?style=social)](https://github.com/xianyu686/bot-ark-tools)
 [![Last Commit](https://img.shields.io/github/last-commit/xianyu686/bot-ark-tools)](https://github.com/xianyu686/bot-ark-tools)
 
-**当前版本：`1.3.1`**（徽章若显示旧版，请以文字为准 —— shields.io 徽章有缓存延迟）
+**当前版本：`1.3.1`**（PyPI 徽章为版本固定式，与本文版本号一起更新，不再依赖实时查询）
 
 </div>
 
