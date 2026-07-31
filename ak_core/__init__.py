@@ -5,9 +5,9 @@
     core = ArkCore(data_dir="D:/AKData", user_data_dir="D:/AKData/userdata")
     result = core.pull("2337879474", "标准轮换·卡池190", 10)
 """
-from .data import DataStore
+from .data import DataStore, default_data_dir
 from .gacha import GachaEngine
 from .core import ArkCore
 
-__all__ = ["ArkCore", "DataStore", "GachaEngine"]
+__all__ = ["ArkCore", "DataStore", "GachaEngine", "default_data_dir"]
 __version__ = "1.0.0"

@@ -11,7 +11,7 @@ from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8")
 
-DATA_DIR = Path("D:/AKData")
+DATA_DIR = get_data_dir()
 RECRUIT_DIR = DATA_DIR / "recruit"
 
 # 公招可出现的特性标签（从 data-tag 过滤）

@@ -17,9 +17,7 @@ from astrbot.api.event import AstrMessageEvent, filter  # noqa: E402
 from astrbot.api.star import Context, Star, register  # noqa: E402
 from astrbot.core.star.filter.command import GreedyStr  # noqa: E402
 
-from ak_core import ArkCore  # noqa: E402
-
-DATA_DIR = "D:/AKData"
+from ak_core import ArkCore, default_data_dir  # noqa: E402
 
 
 @register("astrbot_plugin_ark_toolkit", "阿米娅", "明日方舟数据系统（ak_core 适配）", "1.0.0")
@@ -27,7 +25,7 @@ class ArkToolkit(Star):
     def __init__(self, context: Context, config: AstrBotConfig = None):
         super().__init__(context)
         self.config = config or {}
-        data_dir = getattr(self.config, "get", lambda k, d: d)("data_dir", DATA_DIR) or DATA_DIR
+        data_dir = (getattr(self.config, "get", lambda k, d: d)("data_dir", "") or "") or default_data_dir()
         self.core = ArkCore(data_dir=data_dir, user_data_dir=str(Path(data_dir) / "userdata"))
         logger.info(f"明日方舟数据系统已初始化 | 数据: {data_dir}")
 

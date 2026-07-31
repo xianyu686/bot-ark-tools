@@ -18,7 +18,7 @@ from .prts_client import PrtsClient
 
 sys.stdout.reconfigure(encoding="utf-8")
 
-DATA_DIR = Path("D:/AKData")
+DATA_DIR = get_data_dir()
 STORY_DIR = DATA_DIR / "stories"
 FETCH_LOG = DATA_DIR / "meta" / "fetch_log.json"
 

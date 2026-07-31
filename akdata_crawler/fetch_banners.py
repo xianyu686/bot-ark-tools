@@ -15,7 +15,7 @@ from .prts_client import PrtsClient
 
 sys.stdout.reconfigure(encoding="utf-8")
 
-DATA_DIR = Path("D:/AKData")
+DATA_DIR = get_data_dir()
 BANNER_DIR = DATA_DIR / "banners"
 # 静态基础池（标准/中坚/新手，永不覆盖）
 FALLBACK = "banners_base.json"

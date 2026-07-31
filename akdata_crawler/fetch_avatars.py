@@ -14,7 +14,7 @@ from .prts_client import PrtsClient
 
 sys.stdout.reconfigure(encoding="utf-8")
 
-DATA_DIR = Path("D:/AKData")
+DATA_DIR = get_data_dir()
 AVATAR_DIR = DATA_DIR / "avatars"
 BATCH = 50
 

@@ -2,7 +2,7 @@
 
 用法：
   python -m akdata_crawler.fetch_operators [--live] [--refresh]
-  --live    从 PRTS 实时抓取「干员一览」页面（默认读本地快照 D:\QQBot\prts_operators.html）
+  --live    从 PRTS 实时抓取「干员一览」页面（默认读本地快照 本地快照 prts_operators.html）
   --refresh 强制重新生成（默认：operators.json 已存在且非空则跳过）
 """
 from __future__ import annotations
@@ -15,8 +15,8 @@ from .parsers.operators_html import parse_operators_html, build_index
 
 sys.stdout.reconfigure(encoding="utf-8")
 
-DATA_DIR = Path("D:/AKData")
-SNAPSHOT = Path("D:/QQBot/prts_operators.html")
+DATA_DIR = get_data_dir()
+SNAPSHOT = Path(__file__).resolve().parent.parent / "prts_operators.html"
 LIVE_URL = "https://prts.wiki/w/干员一览"
 
 

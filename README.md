@@ -49,12 +49,20 @@
 - 适配器只是「翻译层」—— 聊天命令 → 调核心 → 拼消息
 - 数据与代码分离 —— 仓库不含数据，用户自己爬
 
-## 📦 安装
+## 📦 安装（给别人部署的步骤）
 
 ```bash
-git clone https://github.com/<your-name>/arknights-toolkit
-cd arknights-toolkit
-pip install -r requirements.txt   # 仅 requests
+git clone https://github.com/xianyu686/bot-ark-tools
+cd bot-ark-tools
+
+# 方式 A：常规
+pip install -r requirements.txt
+# 方式 B：装成包（推荐，import ak_core 直接可用）
+pip install -e .
+
+# 指定数据目录（可选，默认 ~/arknights-data）
+#  export AK_DATA_DIR=/path/to/your/data    (Linux/Mac)
+#  set  AK_DATA_DIR=D:\your\data             (Windows)
 ```
 
 ## 🚀 使用
@@ -62,9 +70,9 @@ pip install -r requirements.txt   # 仅 requests
 ### 1. 生成数据（运行爬虫）
 
 ```bash
-cd arknights-toolkit
+cd bot-ark-tools
 python -m akdata_crawler.run operators    # 干员全量（423）
-python -m akdata_crawler.run avatars      # 头像（423张）
+python -m akdata_crawler.run avatars      # 头像
 python -m akdata_crawler.run archives     # 干员档案
 python -m akdata_crawler.run voices       # 语音文本
 python -m akdata_crawler.run recruit      # 公招数据
@@ -74,7 +82,8 @@ python -m akdata_crawler.run stories      # 剧情（长任务，可 --only main
 python -m akdata_crawler.run all
 ```
 
-数据写入 `D:\AKData\`（可在 `ak_core` 里改目录）。
+数据写入 `AK_DATA_DIR`（默认 `~/arknights-data`），增量同步、断点续爬。
+爬虫需要能访问 PRTS Wiki（国内建议开代理）。
 
 ### 2. 接入 bot
 

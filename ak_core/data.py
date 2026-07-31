@@ -5,13 +5,20 @@
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
+
+
+def default_data_dir() -> str:
+    """数据目录：优先环境变量 AK_DATA_DIR，默认 ~/arknights-data。"""
+    return os.environ.get("AK_DATA_DIR", str(Path.home() / "arknights-data"))
 
 
 class DataStore:
     """惰性加载 + mtime 缓存刷新。"""
 
-    def __init__(self, data_dir: str = "D:/AKData"):
+    def __init__(self, data_dir: str | None = None):
+        self.dir = Path(data_dir or default_data_dir())
         self.dir = Path(data_dir)
         self._cache: dict[str, object] = {}
         self._mtime: dict[str, float] = {}

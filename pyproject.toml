@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ak-core"
+version = "1.0.0"
+description = "Arknights Toolkit - framework-agnostic data system (gacha/archive/voice/story/recruit)"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+dependencies = ["requests>=2.28"]
+
+[project.optional-dependencies]
+astrbot = []  # AstrBot 适配器在 AstrBot 环境下运行，无需额外依赖
+
+[tool.setuptools.packages.find]
+include = ["ak_core*", "akdata_crawler*"]

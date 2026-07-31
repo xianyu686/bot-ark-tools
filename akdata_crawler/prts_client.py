@@ -13,6 +13,8 @@ import json
 import time
 from pathlib import Path
 
+from . import get_cache_dir
+
 import requests
 
 API_URL = "https://prts.wiki/api.php"
@@ -20,12 +22,12 @@ USER_AGENT = "PRTS-Wiki-Research/1.0 (QQ bot Amiya; doctor QQ 2337879474)"
 
 
 class PrtsClient:
-    def __init__(self, cache_dir: str = "D:/AKData/cache/raw", min_interval: float = 1.5):
+    def __init__(self, cache_dir: str | None = None, min_interval: float = 1.5):
         self.s = requests.Session()
         self.s.headers["User-Agent"] = USER_AGENT
         self.min_interval = min_interval
         self._last = 0.0
-        self.cache_dir = Path(cache_dir)
+        self.cache_dir = Path(cache_dir or get_cache_dir())
         self.cache_dir.mkdir(parents=True, exist_ok=True)
 
     # ---- 网络 ----

@@ -15,15 +15,16 @@ import re
 from datetime import date
 from pathlib import Path
 
-from .data import DataStore
+from .data import DataStore, default_data_dir
 from .gacha import GachaEngine, _up_names
 
 
 class ArkCore:
-    def __init__(self, data_dir: str = "D:/AKData", user_data_dir: str = "D:/AKData/userdata"):
+    def __init__(self, data_dir: str | None = None, user_data_dir: str | None = None):
+        data_dir = data_dir or default_data_dir()
         self.store = DataStore(data_dir)
         self.engine = GachaEngine(self.store)
-        self.user_dir = Path(user_data_dir)
+        self.user_dir = Path(user_data_dir or str(Path(data_dir) / "userdata"))
         self.user_dir.mkdir(parents=True, exist_ok=True)
         self._users: dict[str, dict] = {}
         self.daily_limit = 300  # 反刷屏限制（游戏本身无硬上限）
