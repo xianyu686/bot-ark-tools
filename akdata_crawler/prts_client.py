@@ -18,7 +18,7 @@ from . import get_cache_dir
 import requests
 
 API_URL = "https://prts.wiki/api.php"
-USER_AGENT = "PRTS-Wiki-Research/1.0 (QQ bot Amiya; doctor QQ 2337879474)"
+USER_AGENT = "ArknightsToolkit/1.0 (PRTS wiki data fetcher; github.com/xianyu686/bot-ark-tools)"
 
 
 class PrtsClient:

@@ -20,7 +20,7 @@ from astrbot.core.star.filter.command import GreedyStr  # noqa: E402
 from ak_core import ArkCore, default_data_dir  # noqa: E402
 
 
-@register("astrbot_plugin_ark_toolkit", "阿米娅", "明日方舟数据系统（ak_core 适配）", "1.0.0")
+@register("astrbot_plugin_ark_toolkit", "ArknightsToolkit", "明日方舟数据系统（ak_core 适配）", "1.0.0")
 class ArkToolkit(Star):
     def __init__(self, context: Context, config: AstrBotConfig = None):
         super().__init__(context)
@@ -160,7 +160,7 @@ class ArkToolkit(Star):
     async def operator_card(self, event: AstrMessageEvent, name: GreedyStr = ""):
         card = self.core.operator_card(name or "")
         if not card:
-            await event.send(event.plain_result("阿米娅没找到这位干员哦~"))
+            await event.send(event.plain_result("没找到这位干员哦~"))
             return
         lines = [f"📇 {card['name_zh']} ({card['name_en']})",
                  f"⭐ {card['star']}★ | {card['profession']}/{card['subprofession']}",

@@ -71,7 +71,7 @@ pip install -e .
 
 ```bash
 cd bot-ark-tools
-python -m akdata_crawler.run operators    # 干员全量（423）
+python -m akdata_crawler.run operators    # 干员全量（数量随游戏实时更新）
 python -m akdata_crawler.run avatars      # 头像
 python -m akdata_crawler.run archives     # 干员档案
 python -m akdata_crawler.run voices       # 语音文本
@@ -87,16 +87,16 @@ python -m akdata_crawler.run all
 
 ### 2. 接入 bot
 
-**AstrBot**：把 `astrbot_adapter/` 放入 `data/plugins/`，重启后可用：
+**AstrBot**：把 `astrbot_adapter/` 放入 `data/plugins/`，重启后可用（`[唤醒词]` 为你在 AstrBot 配置的唤醒词，如「bot」「助手」等）：
 ```
-阿米娅 方舟      # 查看菜单
-阿米娅 十连      # 抽卡
-阿米娅 干员 能天使 # 图鉴+头像
-阿米娅 档案 能天使
-阿米娅 语音 能天使
-阿米娅 剧情 0-1
-阿米娅 公招 减速 特种
-阿米娅 同步 干员 # 同步资源
+[唤醒词] 方舟        # 查看菜单
+[唤醒词] 十连        # 抽卡
+[唤醒词] 干员 能天使  # 图鉴+头像
+[唤醒词] 档案 能天使
+[唤醒词] 语音 能天使
+[唤醒词] 剧情 0-1
+[唤醒词] 公招 减速 特种
+[唤醒词] 同步 干员   # 同步资源
 ```
 
 **其他框架**：实例化 `ArkCore`，把命令翻译成调用即可（见 `ak_core/core.py` 的 API）。

@@ -1,7 +1,7 @@
 """PRTS「干员一览」页面 HTML 解析器。
 
 干员记录是压缩单行的 <div data-zh="..." data-xxx="..." ...> 元素，
-用 re.findall 提取全部 423 条，再逐属性解析。
+用 re.findall 提取全部干员，再逐属性解析。
 """
 from __future__ import annotations
 
