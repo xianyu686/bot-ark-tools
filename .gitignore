@@ -17,6 +17,12 @@ __pycache__/
 .venv/
 venv/
 
+# 构建产物
+dist/
+build/
+*.whl
+*.tar.gz
+
 # 日志
 *.log
 banner_sync.log
