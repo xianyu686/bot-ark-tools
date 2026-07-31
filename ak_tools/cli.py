@@ -1,4 +1,4 @@
-"""ark-tools 命令行：零框架依赖的纯净包入口。
+"""ark-tools 命令行：纯净包入口（零依赖任何 bot 框架）。
 
 用法：
   ark-tools sync operators        # 同步干员数据
