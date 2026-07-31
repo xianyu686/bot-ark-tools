@@ -54,7 +54,7 @@ ark-tools voice 能天使                # 查语音文本
 - 📜 **干员档案** — 履历 / 诊断 / 档案
 - 🎤 **语音记录** — 全部台词文本
 - 📖 **剧情** — 主线 / 活动 / 干员密录
-- 🎯 **公开招募** — 选 tag 算稀有度
+- 🎯 **公开招募** — 还原游戏：选 1-3 个标签 + 选招募时间（0:10~9:00），空组合落到保底池，`公招记录` 查历史
 - 🔄 **自动同步** — 增量爬取、断点续传，随时 `ark-tools sync all` 更新
 
 ---
@@ -91,7 +91,9 @@ core.operator_card("能天使")                    # 干员信息
 core.get_archive("能天使")                     # 档案
 core.get_voice("能天使")                       # 语音
 core.get_story("0-10")                        # 剧情
-core.recruit("user_id", "减速 特种")            # 公招
+core.recruit("user_id", "减速 特种")            # 公招（默认 9:00）
+core.recruit("user_id", "资深干员 输出", "3:50")  # 公招并指定时间
+core.recruit_history("user_id")                # 公招记录
 core.list_banners()                           # 卡池列表
 ```
 

@@ -96,3 +96,7 @@ class ArkToolkit(Star):
     @filter.command("公招", alias={"招募"})
     async def recruit(self, event: AstrMessageEvent, tags: GreedyStr = ""):
         await self._reply(event, f"公招 {tags}".strip())
+
+    @filter.command("公招记录", alias={"招募记录"})
+    async def recruit_history(self, event: AstrMessageEvent):
+        await self._reply(event, "公招记录")

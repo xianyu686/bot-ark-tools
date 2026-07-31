@@ -103,10 +103,18 @@ r = core.pull("user_1", "标准轮换·卡池190", 10)
 
 ## 公开招募
 
-### `core.recruit(user_id: str, tags_str: str = "") -> dict`
-- 空参数 → 随机 4 个标签：`{"ok": True, "suggest": [...]}`
-- 带标签 → 抽干员：`{"ok": True, "operator": {...}, "tags": [...]}`
+### `core.recruit(user_id: str, tags_str: str = "", time: str = "") -> dict`
+还原游戏机制：1-3 个不重复标签；保底（无=1★ / 资深=5★ / 高资=6★）；招募时间限制最高稀有度（0:10/0:50/1:00/1:20/2:20/3:50/7:40/9:00 → 1~6★）；标签交集为空时不拒绝，落到保底池。
+- 空参数 → 随机 5 个标签：`{"ok": True, "suggest": [...]}`
+- 带标签 → 抽干员：`{"ok": True, "operator": {...}, "tags": [...], "time": "9:00"}`
 - 失败 → `{"ok": False, "error": ...}`
+```python
+core.recruit("user_1", "近卫 特种")          # 空交集 → 保底 1-2★
+core.recruit("user_1", "资深干员 输出", "3:50")  # 指定时间
+```
+
+### `core.recruit_history(user_id: str) -> list[dict]`
+最近 30 条公招记录（`{"name", "star", "tags", "time"}`）。
 
 ---
 

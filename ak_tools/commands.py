@@ -50,6 +50,8 @@ class CommandHandler:
             return self._story(arg)
         if cmd in ("公招", "招募"):
             return self._recruit(user_id, arg)
+        if cmd in ("公招记录", "招募记录"):
+            return self._recruit_history(user_id)
         if cmd in ("菜单", "方舟", "功能"):
             return self._menu()
 
@@ -65,7 +67,8 @@ class CommandHandler:
         # 先匹配已知命令词
         known = ["十连", "10连", "单抽", "卡池", "卡池列表", "切换", "切", "保底详情", "保底",
                  "寻访记录", "井", "兑换", "免费抽", "每日免费", "资源", "充值", "干员",
-                 "图鉴", "档案", "语音", "台词", "剧情", "看剧情", "公招", "招募", "菜单", "方舟", "功能"]
+                 "图鉴", "档案", "语音", "台词", "剧情", "看剧情", "公招", "招募",
+                 "公招记录", "招募记录", "菜单", "方舟", "功能"]
         for kw in sorted(known, key=len, reverse=True):
             if text == kw:
                 return kw, ""
@@ -81,7 +84,7 @@ class CommandHandler:
                 "🐰 明日方舟数据系统\n"
                 "🎰 抽卡：十连 / 单抽 / 卡池 / 切换 X / 保底详情 / 井 / 免费抽 / 资源 充值\n"
                 "📇 图鉴：干员 X / 档案 X / 语音 X / 剧情 X\n"
-                "🎯 公招：公招 标签1 标签2\n"
+                "🎯 公招：公招 标签1 标签2 [时间] / 公招记录\n"
                 "🔄 同步：同步 干员/档案/剧情/卡池/全部"),
             "image": None, "segments": None,
         }
@@ -181,15 +184,36 @@ class CommandHandler:
         return {"text": f"📖 {d['stage']}", "image": None, "segments": self._chunk(body)}
 
     def _recruit(self, user_id: str, tags: str) -> dict:
-        r = self.core.recruit(user_id, tags)
+        # 最后一个形如「3:50」的 token 当作招募时间，其余是标签
+        time = ""
+        tokens = [t.strip() for t in re.split(r"[\s,、]+", tags.strip()) if t.strip()]
+        if tokens and ":" in tokens[-1]:
+            time = tokens.pop()
+        tags_str = " ".join(tokens)
+        r = self.core.recruit(user_id, tags_str, time)
         if r["ok"] and r.get("suggest"):
             return {"text": "🎯 随机标签：\n  " + " / ".join(r["suggest"]) +
-                           "\n\n发送「公招 标签1 标签2」选择组合~", "image": None, "segments": None}
+                           "\n\n发送「公招 标签1 标签2 [时间]」选择组合~"
+                           "\n⏱ 时间可选：0:10 / 0:50 / 1:00 / 1:20 / 2:20 / 3:50 / 7:40 / 9:00"
+                           "\n（资深保5★，高资保6★）", "image": None, "segments": None}
         if r["ok"]:
             op = r["operator"]
-            return {"text": f"🎯 公招结果：[{op['star']}★] {op['profession']} {op['name_zh']}",
+            t = r.get("time") or "9:00"
+            return {"text": f"🎯 公招结果：[{op['star']}★] {op['profession']} {op['name_zh']}（⏱ {t}）\n"
+                            f"标签：{'/'.join(r.get('tags', []))}",
                     "image": None, "segments": None}
         return {"text": f"🐰 {r['error']}", "image": None, "segments": None}
+
+    def _recruit_history(self, user_id: str) -> dict:
+        hist = self.core.recruit_history(user_id)
+        if not hist:
+            return {"text": "还没有公招记录哦~", "image": None, "segments": None}
+        lines = ["🎯 最近公招："]
+        for h in hist[-10:]:
+            t = h.get("time", "")
+            lines.append(f"  [{h['star']}★] {h['name']} ({'/'.join(h.get('tags', []))})"
+                         + (f" ⏱{t}" if t else ""))
+        return {"text": "\n".join(lines), "image": None, "segments": None}
 
     @staticmethod
     def _chunk(text: str, size: int = 1500) -> list[str]:

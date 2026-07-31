@@ -221,15 +221,22 @@ class ArkCore:
 
     # ---------- 公开招募 ----------
 
-    def recruit(self, user_id: str, tags_str: str = "") -> dict:
+    # 招募时间 → 最高稀有度上限（还原游戏：时间越长允许越稀有）
+    RECRUIT_TIMES = {
+        "0:10": 1, "0:50": 2, "1:00": 3, "1:20": 4, "2:20": 4,
+        "3:50": 5, "7:40": 6, "9:00": 6,
+    }
+
+    def recruit(self, user_id: str, tags_str: str = "", time: str = "") -> dict:
         u = self._user(user_id)
         pool = self.store.load("recruit/recruit_pool.json") or []
         tag_map = self.store.load("recruit/recruit_tags.json") or {}
         if not pool:
             return {"ok": False, "error": "公招数据未就绪，请先同步"}
         if not tags_str.strip():
+            # 随机 5 个标签（含小概率出现稀有度标签）
             common = [t for t in tag_map if t not in ("资深干员", "高级资深干员")]
-            sel = random.sample(common, min(4, len(common)))
+            sel = random.sample(common, min(5, len(common)))
             roll = random.random()
             if roll < 0.03:
                 sel[0] = "高级资深干员"
@@ -238,19 +245,50 @@ class ArkCore:
             random.shuffle(sel)
             return {"ok": True, "suggest": sel}
         chosen = [t.strip() for t in re.split(r"[\s,、]+", tags_str.strip()) if t.strip()]
-        floor = 6 if "高级资深干员" in chosen else (5 if "资深干员" in chosen else 3)
+        # 游戏规则：最多 3 个标签、不能重复
+        if len(chosen) > 3:
+            return {"ok": False, "error": "最多选 3 个标签哦~"}
+        if len(set(chosen)) != len(chosen):
+            return {"ok": False, "error": "标签不能重复哦~"}
+        # 稀有度保底：高资 6★ / 资深 5★ / 无稀有度 1★（最低一星）
+        floor = 6 if "高级资深干员" in chosen else (5 if "资深干员" in chosen else 1)
+        time_cap = self._time_cap(time)
+        if floor > time_cap:
+            return {"ok": False, "error": "这个时间满足不了保底哦~（资深保5★ / 高资保6★）"}
+        # 候选 = 满足所有标签 且 星级在 [保底, 时间上限]
         cands = None
         for t in chosen:
             names = set(tag_map.get(t, []))
             cands = names if cands is None else (cands & names)
-        if not cands:
-            return {"ok": False, "error": "这组标签没有对应干员哦~"}
-        eligible = [op for op in pool if op["name_zh"] in cands and op["star"] >= floor] or \
-                   [op for op in pool if op["name_zh"] in cands]
+        eligible = [op for op in pool if op["name_zh"] in cands and floor <= op["star"] <= time_cap]
         if not eligible:
-            return {"ok": False, "error": "没有符合条件的结果…"}
+            # 标签交集为空/不足：真实游戏不拒绝，落到保底池
+            # 无稀有度 → 1-2★ 基础干员；资深/高资 → 保底星级池
+            if floor == 1:
+                eligible = [op for op in pool if op["star"] <= min(2, time_cap)]
+            else:
+                eligible = [op for op in pool if floor <= op["star"] <= time_cap]
+        if not eligible:
+            return {"ok": False, "error": "没有符合条件的干员…"}
         op = random.choice(eligible)
+        t_disp = time or "9:00"
         u["recruit"]["history"] = u["recruit"].get("history", [])[-30:]
-        u["recruit"]["history"].append({"name": op["name_zh"], "star": op["star"], "tags": chosen})
+        u["recruit"]["history"].append({"name": op["name_zh"], "star": op["star"],
+                                        "tags": chosen, "time": t_disp})
         self._save(user_id)
-        return {"ok": True, "operator": op, "tags": chosen}
+        return {"ok": True, "operator": op, "tags": chosen, "time": t_disp}
+
+    def _time_cap(self, time: str) -> int:
+        """公招时间 → 最高稀有度上限（默认 9:00 = 6★）。"""
+        if not time:
+            return 6
+        t = str(time).strip().lower()
+        m = re.match(r"^(\d{1,2})[:：](\d{1,2})$", t)
+        if m:
+            key = f"{int(m.group(1))}:{m.group(2)}"
+            return self.RECRUIT_TIMES.get(key, 6)
+        return self.RECRUIT_TIMES.get(t, 6)
+
+    def recruit_history(self, user_id: str) -> list[dict]:
+        """公招历史（最近 30 条，含 name/star/tags）。"""
+        return list(self._user(user_id).get("recruit", {}).get("history", []))
