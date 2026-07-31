@@ -1,0 +1,30 @@
+# 数据（不包含游戏素材，用户自行爬取）
+D:/AKData/
+D:\AKData\
+AKData/
+data/
+
+# 配置与密钥
+config.json
+cmd_config.json
+*.secret
+user_data*.json
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# 日志
+*.log
+banner_sync.log
+
+# 编辑器
+.vscode/
+.idea/
+.DS_Store
+
+# 本地爬虫缓存
+cache/raw/

@@ -1,0 +1,8 @@
+name: astrbot_plugin_ark_toolkit
+desc: 明日方舟数据系统（ak_core 适配） - 抽卡/干员图鉴/档案/语音/剧情/公招
+version: 1.0.0
+author: Amiya
+repo: ""
+astrbot_version: ">=4.24.0"
+support_platforms:
+  - aiocqhttp
