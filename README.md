@@ -12,6 +12,8 @@
 [![Stars](https://img.shields.io/github/stars/xianyu686/bot-ark-tools?style=social)](https://github.com/xianyu686/bot-ark-tools)
 [![Last Commit](https://img.shields.io/github/last-commit/xianyu686/bot-ark-tools)](https://github.com/xianyu686/bot-ark-tools)
 
+**当前版本：`1.3.1`**（徽章若显示旧版，请以文字为准 —— shields.io 徽章有缓存延迟）
+
 </div>
 
 ## ✨ 什么是「纯净」？
