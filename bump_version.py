@@ -20,22 +20,31 @@ def main() -> int:
         return 1
     new = sys.argv[1]
 
+    def read(p: Path) -> str:
+        # newline='' 保留原行尾（Windows 下是 CRLF），避免写回造成 git 行尾噪音
+        with p.open("r", encoding="utf-8", newline="") as f:
+            return f.read()
+
+    def write(p: Path, s: str) -> None:
+        with p.open("w", encoding="utf-8", newline="") as f:
+            f.write(s)
+
     # pyproject.toml: version = "x.y.z"
-    py = PYPROJECT.read_text(encoding="utf-8")
+    py = read(PYPROJECT)
     py, n1 = re.subn(r'(?m)^version\s*=\s*"[^"]+"', f'version = "{new}"', py, count=1)
     if not n1:
         print("[x] pyproject.toml 找不到 version 行")
         return 1
-    PYPROJECT.write_text(py, encoding="utf-8")
+    write(PYPROJECT, py)
 
     # README.md: 徽章 PyPI-<旧>-blue  +  当前版本：`<旧>`
-    rd = README.read_text(encoding="utf-8")
+    rd = read(README)
     rd, n2 = re.subn(r"PyPI-[\d.]+-blue", f"PyPI-{new}-blue", rd)
     rd, n3 = re.subn(r"当前版本：`[\d.]+`", f"当前版本：`{new}`", rd)
     if not n2 or not n3:
         print(f"[x] README 未匹配到徽章(n2={n2})或当前版本文字(n3={n3})")
         return 1
-    README.write_text(rd, encoding="utf-8")
+    write(README, rd)
 
     print(f"[OK] 版本已同步到 {new}:")
     print(f"  pyproject.toml version = {new}")
