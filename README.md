@@ -2,136 +2,85 @@
 
 # Arknights Toolkit · 明日方舟数据系统
 
-**纯净 · 框架无关 · 即插即用**
-
-一个零依赖 bot 框架的明日方舟数据核心：完整复刻寻访机制 + 干员图鉴 / 档案 / 语音 / 剧情 / 公招。
+**纯 Python 的明日方舟数据工具箱 · 不用懂任何框架 · 装上就能玩**
 
 [![PyPI](https://img.shields.io/badge/PyPI-1.3.1-blue)](https://pypi.org/project/arknights-datakit/)
 [![Python](https://img.shields.io/pypi/pyversions/arknights-datakit)](https://pypi.org/project/arknights-datakit/)
 [![License](https://img.shields.io/github/license/xianyu686/bot-ark-tools)](LICENSE)
-[![Stars](https://img.shields.io/github/stars/xianyu686/bot-ark-tools?style=social)](https://github.com/xianyu686/bot-ark-tools)
-[![Last Commit](https://img.shields.io/github/last-commit/xianyu686/bot-ark-tools)](https://github.com/xianyu686/bot-ark-tools)
 
-**当前版本：`1.3.1`**（PyPI 徽章为版本固定式，与本文版本号一起更新，不再依赖实时查询）
+**当前版本：`1.3.1`**（用 `python bump_version.py X.Y.Z` 发版，三处版本号自动同步）
 
 </div>
 
-## ✨ 什么是「纯净」？
+装好之后，你能在命令行抽卡、查干员档案、看语音剧情，还能把它接进 QQ 机器人当"方舟小助手"。数据会自动从 [PRTS Wiki](https://prts.wiki) 抓取，**不用自己准备任何数据文件**。
 
-- 🧩 **零框架依赖** — 核心引擎是纯 Python，`import ak_core` 就能用，不绑定任何 bot 框架
-- 🔌 **即插即用** — 自带 `ark-tools` CLI 和 HTTP 微服务，任何框架 / 网页 / 脚本都能调
-- 📦 **纯代码** — 仓库只含代码，**不含任何游戏数据 / 图片 / 密钥**
-- 🔄 **数据自取** — 数据由用户运行爬虫从 PRTS 获取，实时更新
+---
 
-## 🚀 快速开始
+## 🚀 三步上手（小白也能 5 分钟跑起来）
 
+> 全程只要复制粘贴，不用懂代码。
+
+**第 0 步 · 装 Python（已有可跳过）**
+- 需要 **Python 3.9+**（Windows / macOS / Linux 都行）
+- 没有就去 [python.org](https://www.python.org/downloads/) 下载安装，安装时**记得勾选 "Add Python to PATH"**
+
+**第 1 步 · 安装**
 ```bash
 pip install arknights-datakit
-
-ark-tools sync all              # 同步全部数据（自动实时抓取）
-ark-tools pull --user 1 --count 10   # 抽十连
-ark-tools server --port 8900    # 启动 HTTP 微服务
 ```
 
-> 数据目录默认 `~/arknights-data`，可用环境变量 `AK_DATA_DIR` 修改。
+**第 2 步 · 同步数据（第一次要等几分钟，它会自动抓取全部数据）**
+```bash
+ark-tools sync all
+```
+> 数据默认存到 `~/arknights-data`，想换位置就设置环境变量 `AK_DATA_DIR`。
 
-## ✨ 功能
+**第 3 步 · 试一下**
+```bash
+ark-tools pull --user 1 --count 10    # 抽十连
+ark-tools operator 能天使             # 查干员
+ark-tools archive 能天使              # 查档案
+ark-tools voice 能天使                # 查语音文本
+```
 
-- 🎰 **寻访抽卡** — 完全复刻游戏机制：
-  - 基础概率 6★2% / 5★8% / 4★50% / 3★40%
-  - 6★ 软保底（51 抽起 +2%/抽，99 抽必出）
-  - 十连 / 前 10 抽 5★ 保底
-  - 限定池双 UP 权重 + 300 抽井
-  - 标准选调 150/300、联动 120 保底
-  - 中坚寻访独立保底、跨池继承规则
-- 📇 **干员图鉴** — 干员信息卡 + 头像
-- 📜 **干员档案** — 完整档案（基础 / 履历 / 诊断 / 档案1-4）
+✅ 完成！命令行就能玩明日方舟数据了。
+
+---
+
+## 🎮 能干什么
+
+- 🎰 **抽卡寻访** — 完全还原游戏的概率、软保底、限定池和井，抽起来跟游戏里一样
+- 📇 **干员图鉴** — 查干员信息卡 + 头像
+- 📜 **干员档案** — 履历 / 诊断 / 档案
 - 🎤 **语音记录** — 全部台词文本
 - 📖 **剧情** — 主线 / 活动 / 干员密录
-- 🎯 **公开招募** — tag 组合锁定稀有度
-- 🔄 **资源同步** — 从 PRTS 增量爬取，断点续爬
+- 🎯 **公开招募** — 选 tag 算稀有度
+- 🔄 **自动同步** — 增量爬取、断点续传，随时 `ark-tools sync all` 更新
 
-## 🖥️ 纯净包用法
+---
 
-装完自带 `ark-tools` 命令（零 bot 框架依赖）：
+## 💬 接进 QQ（可选）
 
-```bash
-ark-tools sync operators|avatars|archives|voices|stories|recruit|banners|all
-ark-tools pull --user <id> --banner <池名> --count 10
-ark-tools operator 能天使      # 查干员
-ark-tools archive 能天使       # 查档案
-ark-tools voice 能天使         # 查语音
-ark-tools story 0-10           # 查剧情
-ark-tools recruit --tags "减速 特种"
-ark-tools server --port 8900   # HTTP 微服务
-```
+命令行玩够了想让它进 QQ 群？两个办法，由简到繁：
 
-**HTTP 微服务**（任何框架 / 网页 / 脚本都能调）：
-
+### 方式一 · HTTP 服务（最简单，任何机器人框架都能调）
 ```bash
 ark-tools server --port 8900
-curl http://127.0.0.1:8900/health
-curl "http://127.0.0.1:8900/operator?name=%E8%83%BD%E5%A4%A9%E4%BD%BF"
-curl -X POST http://127.0.0.1:8900/gacha/pull -d '{"user_id":"1","count":10}'
 ```
-
-> 中文参数需 URL 编码（HTTP 标准）。接口见 [docs/API.md](docs/API.md)。
-
-## 🏗️ 架构
-
-```
-┌────────────────────────────────────────────────┐
-│  ak_core           核心引擎（纯 Python，零框架依赖）   │
-│                    input: 普通参数 → output: 普通 dict │
-└────────────────────────────────────────────────┘
-        ▲ 调用
-┌────────────────────────────────────────────────┐
-│  ak_tools          CommandHandler 统一命令分发器    │
-│                    CLI（ark-tools）+ HTTP 微服务     │
-│                    handle(user_id, text) → {text,   │
-│                                              image,  │
-│                                              segments}│
-└────────────────────────────────────────────────┘
-        ▲ 喂文本                  ▲ 喂文本
-┌─────────────────┐   ┌─────────────────────┐   ┌───────────────┐
-│ adapters/astrbot │   │ adapters/nonebot2    │   │ HTTP POST /chat│
-│ AstrBot 适配器    │   │ NoneBot2 适配器       │   │ （任何语言）      │
-│ （超薄壳）        │   │ （超薄壳）             │   └───────────────┘
-└─────────────────┘   └─────────────────────┘
-        ▲ 读数据
-┌────────────────────────────────────────────────┐
-│  akdata_crawler     PRTS Wiki 爬虫                │
-│  生成数据目录（干员/卡池/档案/语音/剧情/公招）        │
-└────────────────────────────────────────────────┘
-```
-
-**设计原则**：
-- `ak_core` **零框架依赖** — 输入普通参数，返回普通 dict
-- `CommandHandler` **统一命令分发** — 所有命令逻辑一处，任何框架喂文本就能用
-- **适配器超薄** — 只做「事件 → handler.handle() → 发消息」，零逻辑重复
-- 数据与代码分离 — 仓库不含数据，用户自己爬
-
-## 🔌 接入 bot（统一命令分发器）
-
-所有命令逻辑集中在 `CommandHandler`（`ak_tools/commands.py`）——**适配器只需「喂文本 → 收回复」**。返回值统一 `{text, image, segments}`。
-
-**HTTP 服务**（任何框架/语言都能接）：
+然后任何语言/框架发一条 HTTP 请求就能用：
 ```bash
-ark-tools server --port 8900
-curl -X POST http://127.0.0.1:8900/chat -d '{"user_id":"1","text":"十连"}'
+curl "http://127.0.0.1:8900/chat" -d '{"user_id":"1","text":"十连"}'
 ```
+接口说明见 [docs/API.md](docs/API.md)。
 
-**AstrBot**：把 `adapters/astrbot/` 放入 `data/plugins/`，重启后：
-```
-[唤醒词] 方舟 · 十连 · 卡池 · 干员 X · 档案 X · 语音 X · 剧情 X · 公招
-```
+### 方式二 · 现成框架适配器（AstrBot / NoneBot2）
+见下方「开发者专区」，复制一个文件就行，适配器只是个"薄壳"。
 
-**NoneBot2**：把 `adapters/nonebot2/plugins/ark_toolkit.py` 放入 `plugins/`（需 `pip install nonebot2 nonebot-adapter-onebot`）。
+---
 
-**其他框架**：见 [docs/ADAPTER.md](docs/ADAPTER.md) —— 5 步接入，核心逻辑一行不改。
+## 🧩 开发者专区
 
-## 🔧 核心 API
-
+### 用 Python 直接调（核心 API）
 ```python
 from ak_core import ArkCore
 
@@ -146,13 +95,36 @@ core.recruit("user_id", "减速 特种")            # 公招
 core.list_banners()                           # 卡池列表
 ```
 
-## ⚠️ 免责声明
+### 架构
+```
+ak_core 核心引擎（纯 Python，零框架依赖）
+   ↑
+CommandHandler 统一命令分发（ak_tools/commands.py）
+   ↑                        ↑
+CLI (ark-tools)      HTTP 微服务 / 适配器
+   ↑
+akdata_crawler 爬虫 → 数据目录
+```
+核心逻辑全在 `ak_core` + `CommandHandler`，**适配器只负责「喂一句话 → 收回复」**，所以任何框架都能接。
 
+### 接 AstrBot
+把 `adapters/astrbot/` 文件夹放进 AstrBot 的 `data/plugins/`，重启后群里就能用：
+```
+[唤醒词] 方舟 · 十连 · 卡池 · 干员 X · 档案 X · 语音 X · 剧情 X · 公招
+```
+
+### 接 NoneBot2
+把 `adapters/nonebot2/plugins/ark_toolkit.py` 放进 `plugins/`（需 `pip install nonebot2 nonebot-adapter-onebot`）。
+
+### 接入新框架
+详见 [docs/ADAPTER.md](docs/ADAPTER.md) —— 5 步接入，核心逻辑一行不改。
+
+---
+
+## 📄 许可证与免责声明
+
+- 代码采用 **GNU GPL v3**（copyleft，衍生作品必须同样开源，见 [LICENSE](LICENSE)）
 - 游戏数据与素材版权归 **鹰角网络 (Hypergryph)** 所有
 - 数据来源于 [PRTS Wiki](https://prts.wiki)（CC BY-NC-SA 4.0）
-- 本仓库**只含代码**，数据由用户自行爬取
+- 本仓库**只含代码**，不含任何游戏数据 / 图片 / 密钥
 - 本工具仅供学习交流，**禁止商用**；爬虫遵守 PRTS robots.txt 与限速要求
-
-## 📄 许可证
-
-代码：**GNU GPL v3**（copyleft —— 衍生作品必须同样开源，见 [LICENSE](LICENSE)）
