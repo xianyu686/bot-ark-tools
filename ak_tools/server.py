@@ -17,8 +17,10 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import urlparse, parse_qs
 
 from ak_core import ArkCore
+from .commands import CommandHandler
 
 CORE = ArkCore()
+HANDLER = CommandHandler(CORE)
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -67,7 +69,11 @@ class Handler(BaseHTTPRequestHandler):
         path = urlparse(self.path).path.rstrip("/")
         body = self._read_body()
         try:
-            if path == "/gacha/pull":
+            if path == "/chat":
+                # 统一聊天入口：{"user_id": "...", "text": "十连"}
+                r = HANDLER.handle(body.get("user_id", ""), body.get("text", ""))
+                self._json({"ok": True, "data": r})
+            elif path == "/gacha/pull":
                 r = CORE.pull(body.get("user_id", ""), body.get("banner"), int(body.get("count", 1)))
                 self._json({"ok": r.get("ok", False), "error": r.get("error"), "data": r})
             elif path == "/recruit":

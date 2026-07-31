@@ -100,9 +100,15 @@ curl -X POST http://127.0.0.1:8900/gacha/pull -d '{"user_id":"1","count":10}'
 - **适配器可插拔** — `adapters/<框架>/` 一个目录一个框架，都是「命令 → 调核心 → 拼消息」的薄壳
 - 数据与代码分离 — 仓库不含数据，用户自己爬
 
-## 🔌 接入 bot（可选薄壳）
+## 🔌 接入 bot（统一命令分发器）
 
-纯净核心本身就能用；想接 bot 加一个适配器壳：
+所有命令逻辑集中在 `CommandHandler`（`ak_tools/commands.py`）——**适配器只需「喂文本 → 收回复」**。返回值统一 `{text, image, segments}`。
+
+**HTTP 服务**（任何框架/语言都能接）：
+```bash
+ark-tools server --port 8900
+curl -X POST http://127.0.0.1:8900/chat -d '{"user_id":"1","text":"十连"}'
+```
 
 **AstrBot**：把 `adapters/astrbot/` 放入 `data/plugins/`，重启后：
 ```
@@ -111,7 +117,7 @@ curl -X POST http://127.0.0.1:8900/gacha/pull -d '{"user_id":"1","count":10}'
 
 **NoneBot2**：把 `adapters/nonebot2/plugins/ark_toolkit.py` 放入 `plugins/`（需 `pip install nonebot2 nonebot-adapter-onebot`）。
 
-**其他框架**：`from ak_core import ArkCore`，把命令翻译成调用即可。API 见 [docs/API.md](docs/API.md)。
+**其他框架**：见 [docs/ADAPTER.md](docs/ADAPTER.md) —— 5 步接入，核心逻辑一行不改。
 
 ## 🔧 核心 API
 

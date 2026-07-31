@@ -71,7 +71,19 @@ def _server(port: int):
     run_server(port=port)
 
 
+def _chat(user_id: str, text: str):
+    from .commands import CommandHandler
+    r = CommandHandler().handle(user_id, text)
+    print(r.get("text", ""))
+    for seg in r.get("segments") or []:
+        print(seg)
+
+
 def main():
+    try:
+        sys.stdout.reconfigure(encoding="utf-8")
+    except Exception:
+        pass
     ap = argparse.ArgumentParser(prog="ark-tools", description="明日方舟数据系统（纯净包）")
     ap.add_argument("--data-dir", default=None, help=f"数据目录（默认 AK_DATA_DIR 或 {default_data_dir()}）")
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -93,6 +105,10 @@ def main():
 
     sv = sub.add_parser("server", help="启动 HTTP 微服务")
     sv.add_argument("--port", type=int, default=8899)
+
+    ch = sub.add_parser("chat", help="统一命令入口：ark-tools chat '十连'")
+    ch.add_argument("--user", default="cli")
+    ch.add_argument("text")
 
     args = ap.parse_args()
 
@@ -117,6 +133,8 @@ def main():
         _recruit(args.tags)
     elif args.cmd == "server":
         _server(args.port)
+    elif args.cmd == "chat":
+        _chat(args.user, args.text)
 
 
 if __name__ == "__main__":
