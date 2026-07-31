@@ -101,7 +101,9 @@ python -m akdata_crawler.run all
 [唤醒词] 同步 干员   # 同步资源
 ```
 
-**其他框架**：实例化 `ArkCore`，把命令翻译成调用即可（见 `ak_core/core.py` 的 API）。
+**NoneBot2**：把 `adapters/nonebot2/plugins/ark_toolkit.py` 放入 NoneBot2 的 `plugins/` 目录（需 `pip install nonebot2 nonebot-adapter-onebot`）。
+
+**其他框架**：实例化 `ArkCore`，把命令翻译成调用即可。完整 API 见 [docs/API.md](docs/API.md)。
 
 ## 🔧 核心 API
 
