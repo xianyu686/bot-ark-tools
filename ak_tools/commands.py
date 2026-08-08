@@ -55,15 +55,19 @@ class CommandHandler:
         if cmd in ("菜单", "方舟", "功能"):
             return self._menu()
 
-        # 未匹配：可能是「干员 X」等带参命令的缺省
-        if arg and not cmd:
-            return self._operator(arg)
+        # 未匹配：未知文本 → 友好提示（不再有解包崩溃的可能）
         return {"text": "没看懂哦~ 发送「方舟」查看菜单", "image": None, "segments": None}
 
     @staticmethod
     def _split(text: str) -> tuple[str, str]:
-        """把消息切成 (命令, 参数)。支持「干员 能天使」「干员能天使」。"""
-        text = text.strip()
+        """把消息切成 (命令, 参数)。支持「干员 能天使」「干员能天使」「10连」等。
+
+        兼容三种写法：命令==词、命令+空格/逗号、命令粘连（二字及以上命令做前缀匹配）。
+        任何未识别输入都安全返回 (原文, "")，绝不让上层解包崩溃。
+        """
+        text = (text or "").strip()
+        if not text:
+            return "", ""
         # 先匹配已知命令词
         known = ["十连", "10连", "单抽", "卡池", "卡池列表", "切换", "切", "保底详情", "保底",
                  "寻访记录", "井", "兑换", "免费抽", "每日免费", "资源", "充值", "干员",
@@ -74,7 +78,12 @@ class CommandHandler:
                 return kw, ""
             if text.startswith(kw + " ") or text.startswith(kw + "，") or text.startswith(kw + ","):
                 return kw, text[len(kw):].lstrip(" ，,、")
-        return text.split(maxsplit=1) if text else ("", "")
+            # 无空格粘连：只对 2 字及以上命令前缀匹配（避免「切」「井」等单字误吞）
+            if len(kw) >= 2 and text.startswith(kw):
+                return kw, text[len(kw):].strip()
+        # 安全解包：单 token 也返回 (token, "")
+        parts = text.split(maxsplit=1)
+        return parts[0], parts[1] if len(parts) > 1 else ""
 
     # ---------- 各命令实现 ----------
 
@@ -85,7 +94,7 @@ class CommandHandler:
                 "🎰 抽卡：十连 / 单抽 / 卡池 / 切换 X / 保底详情 / 井 / 免费抽 / 资源 充值\n"
                 "📇 图鉴：干员 X / 档案 X / 语音 X / 剧情 X\n"
                 "🎯 公招：公招 标签1 标签2 [时间] / 公招记录\n"
-                "🔄 同步：同步 干员/档案/剧情/卡池/全部"),
+                "📌 数据更新请运行 CLI：ark-tools sync all"),
             "image": None, "segments": None,
         }
 

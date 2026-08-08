@@ -18,8 +18,8 @@ class DataStore:
     """惰性加载 + mtime 缓存刷新。"""
 
     def __init__(self, data_dir: str | None = None):
+        # 注意：data_dir 为 None 时回退到环境变量 AK_DATA_DIR 或默认目录
         self.dir = Path(data_dir or default_data_dir())
-        self.dir = Path(data_dir)
         self._cache: dict[str, object] = {}
         self._mtime: dict[str, float] = {}
 
