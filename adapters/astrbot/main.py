@@ -11,9 +11,14 @@ from pathlib import Path
 from astrbot.api import AstrBotConfig, logger  # noqa: E402
 from astrbot.api.event import AstrMessageEvent, filter  # noqa: E402
 from astrbot.api.star import Context, Star, register  # noqa: E402
-from astrbot.core.star.filter.command import GreedyStr  # noqa: E402
 
-from ak_core import default_data_dir  # noqa: E402
+try:  # AstrBot 官方内置插件同款导入路径；缺失时按普通 str 兜底
+    from astrbot.core.star.filter.command import GreedyStr  # noqa: E402
+except ImportError:
+    GreedyStr = str  # type: ignore
+
+from ak_core import ArkCore  # noqa: E402
+from ak_core.config import load_config  # noqa: E402
 from ak_tools.commands import CommandHandler  # noqa: E402
 
 
@@ -21,10 +26,18 @@ from ak_tools.commands import CommandHandler  # noqa: E402
 class ArkToolkit(Star):
     def __init__(self, context: Context, config: AstrBotConfig = None):
         super().__init__(context)
-        self.config = config or {}
-        self.handler = CommandHandler()
-        data_dir = (getattr(self.config, "get", lambda k, d: d)("data_dir", "") or "") or default_data_dir()
-        logger.info(f"明日方舟数据系统已初始化 | 数据: {data_dir}")
+        cfg = dict(config or {})
+        # 优先级：插件配置 > config.json / 环境变量 > 默认
+        merged = load_config()
+        merged.update({k: v for k, v in cfg.items() if v is not None and v != ""})
+        core = ArkCore(
+            data_dir=merged.get("data_dir"),
+            user_data_dir=merged.get("user_data_dir"),
+            daily_limit=merged.get("daily_pull_limit"),
+            starting_jade=merged.get("starting_jade"),
+        )
+        self.handler = CommandHandler(core)
+        logger.info(f"明日方舟数据系统已初始化 | 数据: {core.store.dir}")
 
     async def _reply(self, event: AstrMessageEvent, text: str):
         """按「阿米娅 命令」格式去掉唤醒词后分发。"""

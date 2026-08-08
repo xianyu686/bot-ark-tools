@@ -17,9 +17,22 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import urlparse, parse_qs
 
 from ak_core import ArkCore
+from ak_core.config import load_config
 from .commands import CommandHandler
 
-CORE = ArkCore()
+
+def _make_core() -> ArkCore:
+    """按配置（config.json / 环境变量）构建核心。"""
+    cfg = load_config()
+    return ArkCore(
+        data_dir=cfg.get("data_dir"),
+        user_data_dir=cfg.get("user_data_dir"),
+        daily_limit=cfg.get("daily_pull_limit"),
+        starting_jade=cfg.get("starting_jade"),
+    )
+
+
+CORE = _make_core()
 HANDLER = CommandHandler(CORE)
 
 

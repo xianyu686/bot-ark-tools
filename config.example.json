@@ -1,7 +1,7 @@
 {
-  "data_dir": "D:/AKData",
-  "user_data_dir": "D:/AKData/userdata",
-  "crawler_interval_seconds": 1.5,
-  "daily_pull_limit": 300,
-  "starting_jade": 60000
+  "data_dir": "",
+  "user_data_dir": "",
+  "daily_pull_limit": 0,
+  "starting_jade": 60000,
+  "crawler_interval_seconds": 1.5
 }

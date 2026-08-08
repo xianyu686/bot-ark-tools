@@ -18,14 +18,22 @@ import json
 import sys
 
 from ak_core import ArkCore, default_data_dir
+from ak_core.config import load_config
 
 CORE = None
 
 
 def _core() -> ArkCore:
+    """按配置（config.json / 环境变量）构建核心。显式参数优先。"""
     global CORE
     if CORE is None:
-        CORE = ArkCore()
+        cfg = load_config()
+        CORE = ArkCore(
+            data_dir=cfg.get("data_dir"),
+            user_data_dir=cfg.get("user_data_dir"),
+            daily_limit=cfg.get("daily_pull_limit"),
+            starting_jade=cfg.get("starting_jade"),
+        )
     return CORE
 
 

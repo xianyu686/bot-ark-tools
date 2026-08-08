@@ -15,19 +15,25 @@ import re
 from datetime import date
 from pathlib import Path
 
+from .config import _int_env
 from .data import DataStore, default_data_dir
 from .gacha import GachaEngine, _up_names
 
 
 class ArkCore:
-    def __init__(self, data_dir: str | None = None, user_data_dir: str | None = None):
+    def __init__(self, data_dir: str | None = None, user_data_dir: str | None = None,
+                 daily_limit: int | None = None, starting_jade: int | None = None):
         data_dir = data_dir or default_data_dir()
         self.store = DataStore(data_dir)
         self.engine = GachaEngine(self.store)
         self.user_dir = Path(user_data_dir or str(Path(data_dir) / "userdata"))
         self.user_dir.mkdir(parents=True, exist_ok=True)
         self._users: dict[str, dict] = {}
-        self.daily_limit = 0  # 每日上限：0 = 无限（游戏本身无硬上限）
+        # 每日上限：0 = 无限（游戏本身无硬上限）。显式参数优先，其次环境变量 AK_DAILY_PULL_LIMIT
+        self.daily_limit = (daily_limit if daily_limit is not None
+                            else _int_env("AK_DAILY_PULL_LIMIT", 0))
+        self.starting_jade = (starting_jade if starting_jade is not None
+                              else _int_env("AK_STARTING_JADE", 60000))
 
     # ---------- 用户数据 ----------
 
@@ -41,7 +47,7 @@ class ArkCore:
                 except Exception:
                     pass
             self._users[user_id] = {
-                "currencies": {"jade": 60000, "originium": 0, "blue_ticket": 0},
+                "currencies": {"jade": self.starting_jade, "originium": 0, "blue_ticket": 0},
                 "pity": {}, "pool_pulls": {}, "banner_state": {},
                 "owned": {}, "history": [], "total_pulls": 0,
                 "day": str(date.today()), "daily": 0,
@@ -167,7 +173,7 @@ class ArkCore:
     def resources(self, user_id: str, topup: bool = False) -> dict:
         u = self._user(user_id)
         if topup:
-            u["currencies"]["jade"] = max(u["currencies"].get("jade", 0), 60000)
+            u["currencies"]["jade"] = max(u["currencies"].get("jade", 0), self.starting_jade)
             u["currencies"]["originium"] = u["currencies"].get("originium", 0) + 10
             self._save(user_id)
         return u["currencies"]
