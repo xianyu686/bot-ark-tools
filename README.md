@@ -29,11 +29,12 @@
 pip install arknights-datakit
 ```
 
-**第 2 步 · 同步数据（第一次要等几分钟，它会自动抓取干员/头像/档案/语音/公招/卡池）**
+**第 2 步 · 同步数据（第一次约 20~30 分钟，自动抓取干员/头像/档案/语音/公招/卡池）**
 ```bash
 ark-tools sync all
 ```
 > 数据默认存到 `~/arknights-data`，想换位置就设置环境变量 `AK_DATA_DIR`。
+> 想先快一点？先只同步干员 `ark-tools sync operators`，其余随时补跑。
 > 剧情是长任务、不在 `all` 里：需要时单独跑 `ark-tools sync stories --only main`。
 
 **第 3 步 · 试一下**
@@ -74,14 +75,16 @@ ark-tools voice 能天使                # 查语音文本
 ```bash
 ark-tools server --port 8900
 ```
-然后任何语言/框架发一条 HTTP 请求就能用：
+然后任何语言/框架发一条 HTTP 请求就能用（`requests` 已随包装好）：
 ```bash
-curl "http://127.0.0.1:8900/chat" -d '{"user_id":"1","text":"十连"}'
+python -c "import requests;print(requests.post('http://127.0.0.1:8900/chat',json={'user_id':'1','text':'十连'}).json()['data']['text'])"
 ```
+> Windows 中文终端（cmd/PowerShell）直接用 `curl` 传中文可能乱码，请用上面的 Python 方式，
+> 或先执行 `chcp 65001` 再 `curl "http://127.0.0.1:8900/chat" -d '{"user_id":"1","text":"十连"}'`。
 接口说明见 [docs/API.md](docs/API.md)。
 
 ### 方式二 · 现成框架适配器（AstrBot / NoneBot2）
-见下方「开发者专区」，复制一个文件就行，适配器只是个"薄壳"。
+先 `pip install arknights-datakit`，再把适配器文件放进插件目录即可，见下方「开发者专区」。
 
 ---
 
@@ -117,13 +120,19 @@ akdata_crawler 爬虫 → 数据目录
 核心逻辑全在 `ak_core` + `CommandHandler`，**适配器只负责「喂一句话 → 收回复」**，所以任何框架都能接。
 
 ### 接 AstrBot
-把 `adapters/astrbot/` 文件夹放进 AstrBot 的 `data/plugins/`，重启后群里就能用：
+1. **先在你运行 AstrBot 的 Python 环境里装核心包**：`pip install arknights-datakit`
+2. 把 `adapters/astrbot/` 文件夹放进 AstrBot 的 `data/plugins/`，重启 AstrBot
+
+之后在群里直接发命令就能用（带不带唤醒词都行）：
 ```
-[唤醒词] 方舟 · 十连 · 卡池 · 干员 X · 档案 X · 语音 X · 剧情 X · 公招
+方舟 · 十连 · 卡池 · 干员 X · 档案 X · 语音 X · 剧情 X · 公招
 ```
 
 ### 接 NoneBot2
-把 `adapters/nonebot2/plugins/ark_toolkit.py` 放进 `plugins/`（需 `pip install nonebot2 nonebot-adapter-onebot`）。
+1. 先安装：`pip install nonebot2 nonebot-adapter-onebot arknights-datakit`
+2. 把 `adapters/nonebot2/plugins/ark_toolkit.py` 放进你的 `plugins/` 目录
+
+之后在群里直接发命令即可（`方舟` 看菜单、`十连` 抽卡、`干员 能天使` 查干员）。
 
 ### 接入新框架
 详见 [docs/ADAPTER.md](docs/ADAPTER.md) —— 5 步接入，核心逻辑一行不改。
