@@ -54,6 +54,44 @@ def _banner_type(name: str, col3: str, col4: str) -> str:
     return "standard"
 
 
+def _ensure_base_banners(banner_dir: Path) -> list[dict]:
+    """banners_base.json 缺失时，从 operators.json 自动生成基础池（标准/中坚/新手）。
+
+    该文件不随包发布、也没有线上来源，全新环境必须能自己兜底，否则整个 banners 模块会崩。
+    """
+    base_path = banner_dir / FALLBACK
+    if base_path.exists():
+        return json.loads(base_path.read_text(encoding="utf-8"))
+
+    ops_path = DATA_DIR / "operators.json"
+    if not ops_path.exists():
+        print("[err] 缺少 operators.json，无法生成基础卡池。请先运行 fetch_operators")
+        sys.exit(1)
+    ops = json.loads(ops_path.read_text(encoding="utf-8"))
+
+    def _names(star: int, obtain: str) -> list[str]:
+        return [o["name_zh"] for o in ops
+                if o["star"] == star and obtain in (o.get("obtain_method") or [])]
+
+    base = [
+        {"banner_id": "standard_default", "name": "标准寻访", "type": "standard",
+         "desc": "常驻标准寻访", "start": "", "end": "",
+         "rate_up_6": [], "rate_up_5": [], "free_pull": {"enabled": False}},
+        {"banner_id": "zhongjian_default", "name": "中坚寻访", "type": "zhongjian",
+         "desc": "中坚干员定向寻访", "start": "", "end": "",
+         "rate_up_6": _names(6, "中坚寻访")[:5], "rate_up_5": _names(5, "中坚寻访")[:5],
+         "free_pull": {"enabled": False}},
+        {"banner_id": "newbie_gift", "name": "新手特惠", "type": "newbie",
+         "desc": "新手十连必出六星干员", "start": "", "end": "",
+         "rate_up_6": [{"name": n, "limited": False} for n in _names(6, "标准寻访")[:6]],
+         "rate_up_5": _names(5, "标准寻访")[:4],
+         "free_pull": {"enabled": False}},
+    ]
+    base_path.write_text(json.dumps(base, ensure_ascii=False, indent=1), encoding="utf-8")
+    print(f"[warn] {FALLBACK} 不存在，已从 operators.json 自动生成基础池")
+    return base
+
+
 def parse_limited_page(wikitext: str) -> list[dict]:
     """解析「卡池一览/限时寻访」表格。"""
     banners = []
@@ -136,8 +174,7 @@ def main(refresh: bool = False):
     std = parse_standard_page(std_wt) if std_wt else []
     print(f"[OK] 当前标准轮换 {len(std)} 个")
 
-    fallback = json.loads((BANNER_DIR / FALLBACK).read_text(encoding="utf-8"))
-    base = [b for b in fallback if b["type"] in ("standard", "zhongjian", "newbie")]
+    base = [b for b in _ensure_base_banners(BANNER_DIR) if b["type"] in ("standard", "zhongjian", "newbie")]
 
     all_banners = base + std + limited
     seen = {}

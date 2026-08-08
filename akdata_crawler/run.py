@@ -6,9 +6,9 @@
   python -m akdata_crawler.run archives           # 干员档案
   python -m akdata_crawler.run voices             # 语音文本
   python -m akdata_crawler.run recruit            # 公招数据
-  python -m akdata_crawler.run banners            # 卡池配置(待实现)
+  python -m akdata_crawler.run banners            # 抓取卡池
   python -m akdata_crawler.run stories --only main --resume   # 剧情(长任务)
-  python -m akdata_crawler.run all                # 依次跑 operators/avatars/archives/voices/recruit
+  python -m akdata_crawler.run all                # operators/avatars/archives/voices/recruit/banners
 """
 from __future__ import annotations
 
@@ -49,11 +49,15 @@ def main():
         from .fetch_archives import main as mar
         from .fetch_voices import main as mv
         from .fetch_recruit import main as mr
+        from .fetch_banners import main as mb
         print("== operators =="); mo()
         print("== avatars =="); ma()
         print("== archives =="); mar()
         print("== voices =="); mv()
         print("== recruit =="); mr()
+        print("== banners =="); mb()
+        print("[note] 剧情(stories) 未包含在 all 中，需要请单独跑："
+              "ark-tools sync stories / python -m akdata_crawler.run stories")
     else:
         print(f"未知模块: {cmd}")
         print(__doc__)
