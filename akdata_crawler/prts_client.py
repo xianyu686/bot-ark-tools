@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import time
 from pathlib import Path
 
@@ -19,12 +20,17 @@ import requests
 
 API_URL = "https://prts.wiki/api.php"
 USER_AGENT = "ArknightsToolkit/1.0 (PRTS wiki data fetcher; github.com/xianyu686/bot-ark-tools)"
+RETRIES = 5
 
 
 class PrtsClient:
-    def __init__(self, cache_dir: str | None = None, min_interval: float = 1.5):
+    def __init__(self, cache_dir: str | None = None, min_interval: float | None = None):
         self.s = requests.Session()
         self.s.headers["User-Agent"] = USER_AGENT
+        if min_interval is None:
+            # 限速间隔可配置：显式参数 > 环境变量 AK_CRAWLER_INTERVAL > 默认 1.5s
+            env = os.environ.get("AK_CRAWLER_INTERVAL")
+            min_interval = float(env) if env else 1.5
         self.min_interval = min_interval
         self._last = 0.0
         self.cache_dir = Path(cache_dir or get_cache_dir())
@@ -39,16 +45,29 @@ class PrtsClient:
         self._last = time.monotonic()
 
     def _get(self, url: str, params: dict | None = None, timeout: int = 20):
-        for attempt in range(5):
+        last_status = None
+        for attempt in range(RETRIES):
             try:
                 self._throttle()
                 r = self.s.get(url, params=params, timeout=timeout)
                 if r.status_code == 200:
                     return r
+                last_status = r.status_code
             except requests.RequestException:
-                pass
+                last_status = -1  # 网络异常
             time.sleep(2 ** attempt)
+        print(f"[warn] {url} 重试 {RETRIES} 次仍失败 (最后一次状态码 {last_status})")
         return None
+
+    def _parse_json(self, r):
+        """安全解析 JSON。WAF/网关返回 HTML 时抛清晰错误，而不是 ValueError 崩掉整个爬取。"""
+        try:
+            return r.json()
+        except ValueError:
+            raise RuntimeError(
+                f"API 返回了非 JSON 内容（可能被 WAF/网关拦截），状态码 {r.status_code}，"
+                f"响应前 200 字符: {r.text[:200]!r}"
+            )
 
     # ---- MediaWiki API ----
 
@@ -60,7 +79,7 @@ class PrtsClient:
             r = self._get(API_URL, params)
             if r is None:
                 break
-            data = r.json()
+            data = self._parse_json(r)
             out.append(data)
             if "continue" not in data:
                 break
@@ -113,7 +132,7 @@ class PrtsClient:
             r = self._get(API_URL, params)
             if r is None:
                 break
-            data = r.json()
+            data = self._parse_json(r)
             items = data.get("cargoquery", [])
             if not items:
                 break
