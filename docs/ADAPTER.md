@@ -49,6 +49,36 @@ def on_message(user_id, raw_text):  # 2. 你的框架的消息处理函数
 | NoneBot2 | `adapters/nonebot2/plugins/ark_toolkit.py` | 超薄壳：`on_command` → `_reply()` → handler |
 | HTTP 服务 | `ark-tools server` 的 `POST /chat` | 任何语言都能 `curl` 调用 |
 
+## 接入 LangBot / Kirara-AI / NoobBot / ChatGPT-on-WeChat 等
+
+这些框架没有现成适配器，但都一样简单——**跑一个 HTTP 服务，然后在框架的消息处理里
+发起一次 HTTP 请求**（任何能发请求的语言/框架都行）：
+
+```bash
+ark-tools server --port 8900   # 先启动 HTTP 服务
+```
+
+```python
+# 在你自己的框架插件里，把用户消息转发给它
+import requests
+r = requests.post("http://127.0.0.1:8900/chat",
+                  json={"user_id": "123", "text": "十连"}).json()
+reply_text = r["data"]["text"]     # 直接拿文本发出去
+avatar = r["data"].get("image")    # 有头像就发图片
+```
+
+不同框架的接入点：
+
+| 框架 | 在哪调 HTTP | 参考 |
+|------|------------|------|
+| LangBot | 自定义工具 / 插件事件回调 | 任意 Python 插件里 `requests.post` 即可 |
+| Kirara-AI | 插件 / 事件监听 | 同上 |
+| NoobBot | 插件 / 事件处理 | 同上 |
+| ChatGPT-on-WeChat | 插件 `on_event` 回调 | 同上 |
+
+如果你想要某个框架的"放进去就能用"适配器，按下方「加新框架 = 复制一个壳」，
+把上面的 HTTP 调用换成 `handler.handle()` 直接调用即可。
+
 ## 加新框架 = 复制一个壳
 
 1. 复制 `adapters/astrbot/main.py` 的 `_reply` 模式

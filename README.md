@@ -29,11 +29,12 @@
 pip install arknights-datakit
 ```
 
-**第 2 步 · 同步数据（第一次要等几分钟，它会自动抓取全部数据）**
+**第 2 步 · 同步数据（第一次要等几分钟，它会自动抓取干员/头像/档案/语音/公招/卡池）**
 ```bash
 ark-tools sync all
 ```
 > 数据默认存到 `~/arknights-data`，想换位置就设置环境变量 `AK_DATA_DIR`。
+> 剧情是长任务、不在 `all` 里：需要时单独跑 `ark-tools sync stories --only main`。
 
 **第 3 步 · 试一下**
 ```bash
@@ -44,6 +45,12 @@ ark-tools voice 能天使                # 查语音文本
 ```
 
 ✅ 完成！命令行就能玩明日方舟数据了。
+
+> **可选的配置**：不配置也能跑。想改就复制 `config.example.json` 为 `config.json`
+> 放在运行目录（或设环境变量 `AK_CONFIG` 指向它），支持：`data_dir` 数据目录、
+> `daily_pull_limit` 每日抽卡上限（0=无限）、`starting_jade` 新用户初始玉、
+> `crawler_interval_seconds` 爬虫限速。也可直接用环境变量 `AK_DATA_DIR` /
+> `AK_DAILY_PULL_LIMIT` / `AK_STARTING_JADE` / `AK_CRAWLER_INTERVAL` 覆盖。
 
 ---
 
