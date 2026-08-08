@@ -12,4 +12,4 @@ from .gacha import GachaEngine
 from .core import ArkCore
 
 __all__ = ["ArkCore", "DataStore", "GachaEngine", "default_data_dir"]
-__version__ = "1.0.0"
+__version__ = "1.4.0"

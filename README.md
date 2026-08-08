@@ -4,11 +4,11 @@
 
 **纯 Python 的明日方舟数据工具箱 · 不用懂任何框架 · 装上就能玩**
 
-[![PyPI](https://img.shields.io/badge/PyPI-1.3.1-blue)](https://pypi.org/project/arknights-datakit/)
+[![PyPI](https://img.shields.io/badge/PyPI-1.4.0-blue)](https://pypi.org/project/arknights-datakit/)
 [![Python](https://img.shields.io/pypi/pyversions/arknights-datakit)](https://pypi.org/project/arknights-datakit/)
 [![License](https://img.shields.io/github/license/xianyu686/bot-ark-tools)](LICENSE)
 
-**当前版本：`1.3.1`**（用 `python bump_version.py X.Y.Z` 发版，三处版本号自动同步）
+**当前版本：`1.4.0`**（用 `python bump_version.py X.Y.Z` 发版，三处版本号自动同步）
 
 </div>
 
