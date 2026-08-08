@@ -69,9 +69,35 @@ ark-tools voice 能天使                # 查语音文本
 
 ## 💬 接进 QQ（可选）
 
-命令行玩够了想让它进 QQ 群？两个办法，由简到繁：
+命令行玩够了，想让它进 QQ 群？先做一件事：
 
-### 方式一 · HTTP 服务（最简单，任何机器人框架都能调）
+**下载适配器文件**（适配器不在 pip 包里，需要从 GitHub 拿）：
+1. 打开 https://github.com/xianyu686/bot-ark-tools
+2. 点绿色 **Code → Download ZIP** 下载并解压
+3. 解压后的 `adapters/` 文件夹里，就是各框架的适配器
+
+然后按你的框架选一条路：
+
+### 方式一 · AstrBot（最省事，小白推荐）
+> 前提：你的 AstrBot 已经能正常收发 QQ 消息（AstrBot 的安装与接 QQ 方式见 AstrBot 自己的文档）。
+
+1. 在**运行 AstrBot 的那个 Python 环境**里安装核心包：`pip install arknights-datakit`
+2. 把解压得到的 `adapters/astrbot/` 整个文件夹，复制到 AstrBot 的 `data/plugins/` 目录
+3. 重启 AstrBot
+
+之后在群里直接发命令就能用（带不带唤醒词都行）：
+```
+方舟 · 十连 · 卡池 · 干员 X · 档案 X · 语音 X · 剧情 X · 公招
+```
+
+### 方式二 · NoneBot2
+1. 安装：`pip install nonebot2 nonebot-adapter-onebot arknights-datakit`
+2. 把 `adapters/nonebot2/plugins/ark_toolkit.py` 这一个文件，放进你 NoneBot2 项目的 `plugins/` 目录
+3. 启动你的 NoneBot2
+
+之后在群里直接发命令即可（`方舟` 看菜单、`十连` 抽卡、`干员 能天使` 查干员）。
+
+### 方式三 · HTTP 服务（任何框架都能调，不用适配器）
 ```bash
 ark-tools server --port 8900
 ```
@@ -83,8 +109,7 @@ python -c "import requests;print(requests.post('http://127.0.0.1:8900/chat',json
 > 或先执行 `chcp 65001` 再 `curl "http://127.0.0.1:8900/chat" -d '{"user_id":"1","text":"十连"}'`。
 接口说明见 [docs/API.md](docs/API.md)。
 
-### 方式二 · 现成框架适配器（AstrBot / NoneBot2）
-先 `pip install arknights-datakit`，再把适配器文件放进插件目录即可，见下方「开发者专区」。
+> 想要其它框架（LangBot / Kirara-AI / ChatGPT-on-WeChat 等）？见 [docs/ADAPTER.md](docs/ADAPTER.md)，5 步接入。
 
 ---
 
@@ -119,23 +144,8 @@ akdata_crawler 爬虫 → 数据目录
 ```
 核心逻辑全在 `ak_core` + `CommandHandler`，**适配器只负责「喂一句话 → 收回复」**，所以任何框架都能接。
 
-### 接 AstrBot
-1. **先在你运行 AstrBot 的 Python 环境里装核心包**：`pip install arknights-datakit`
-2. 把 `adapters/astrbot/` 文件夹放进 AstrBot 的 `data/plugins/`，重启 AstrBot
-
-之后在群里直接发命令就能用（带不带唤醒词都行）：
-```
-方舟 · 十连 · 卡池 · 干员 X · 档案 X · 语音 X · 剧情 X · 公招
-```
-
-### 接 NoneBot2
-1. 先安装：`pip install nonebot2 nonebot-adapter-onebot arknights-datakit`
-2. 把 `adapters/nonebot2/plugins/ark_toolkit.py` 放进你的 `plugins/` 目录
-
-之后在群里直接发命令即可（`方舟` 看菜单、`十连` 抽卡、`干员 能天使` 查干员）。
-
 ### 接入新框架
-详见 [docs/ADAPTER.md](docs/ADAPTER.md) —— 5 步接入，核心逻辑一行不改。
+详见 [docs/ADAPTER.md](docs/ADAPTER.md) —— 5 步接入，核心逻辑一行不改。现成接入方式见上方「接进 QQ」。
 
 ---
 
